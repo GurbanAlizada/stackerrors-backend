@@ -14,6 +14,7 @@ import com.stackerrors.model.Question;
 import com.stackerrors.model.User;
 import com.stackerrors.repository.CommentRepository;
 import com.stackerrors.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +40,7 @@ public class CommentService {
     public CommentService(CommentRepository commentRepository,
                           QuestionService questionService,
                           UserService userService,
-                          CloudServiceInter cloudServiceInter,
+                   @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
                           CommentDtoConvertor commentDtoConvertor,
                           AuthService authService, UserRepository userRepository) {
         this.commentRepository = commentRepository;

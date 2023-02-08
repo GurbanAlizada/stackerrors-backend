@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 
 
-@Service
-public class CloudServiceImpl implements CloudServiceInter {
+@Service("cloudinaryServiceImpl")
+public class CloudinaryServiceImpl implements CloudServiceInter {
 
     private Cloudinary cloudinary;
     @Value("${cloud-service.cloudName}")
@@ -26,7 +26,7 @@ public class CloudServiceImpl implements CloudServiceInter {
     @Value("${cloud-service.apiSecret}")
     private String apiSecret;
 
-    public CloudServiceImpl() {
+    public CloudinaryServiceImpl() {
         Map<String, String> valuesMap = new HashMap<>();
         valuesMap.put("cloud_name", "alizada" );
         valuesMap.put("api_key", "231755285583346" );
@@ -34,7 +34,7 @@ public class CloudServiceImpl implements CloudServiceInter {
         cloudinary = new Cloudinary(valuesMap);
     }
 
-    @SneakyThrows
+
     @Override
     public Map<String,String> uploadImage(MultipartFile multipartFile) {
 
@@ -43,12 +43,8 @@ public class CloudServiceImpl implements CloudServiceInter {
 
         try {
             file = convert(multipartFile);
-
             result = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-
             file.delete();
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,10 +56,11 @@ public class CloudServiceImpl implements CloudServiceInter {
 
 
     @Override
-    @SneakyThrows
-    public void deleteImage(String publishId) {
+    public void deleteImage(String publishId) throws IOException {
         cloudinary.uploader().destroy( publishId , ObjectUtils.emptyMap());
     }
+
+
 
 
     private File convert(final MultipartFile multipartFile) {

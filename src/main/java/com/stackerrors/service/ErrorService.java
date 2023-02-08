@@ -7,7 +7,6 @@ import com.stackerrors.dtos.response.ErrorDto;
 import com.stackerrors.exception.ErrorCode;
 import com.stackerrors.exception.GenericException;
 import com.stackerrors.mapper.ErrorDtoConvertor;
-import com.stackerrors.model.*;
 import com.stackerrors.model.Error;
 import com.stackerrors.repository.ErrorRepository;
 import com.stackerrors.dtos.request.AddErrorRequest;
@@ -15,7 +14,7 @@ import com.stackerrors.repository.UserRepository;
 import com.stackerrors.model.Image;
 import com.stackerrors.model.Tag;
 import com.stackerrors.model.User;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ErrorService {
 
     private final ErrorRepository errorRepository;
@@ -40,6 +38,19 @@ public class ErrorService {
     private final ErrorDtoConvertor errorDtoConvertor;
     private final UserRepository userRepository;
 
+    public ErrorService(ErrorRepository errorRepository,
+                        TagService tagService,
+                   @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
+                        AuthService authService,
+                        ErrorDtoConvertor errorDtoConvertor,
+                        UserRepository userRepository) {
+        this.errorRepository = errorRepository;
+        this.tagService = tagService;
+        this.cloudServiceInter = cloudServiceInter;
+        this.authService = authService;
+        this.errorDtoConvertor = errorDtoConvertor;
+        this.userRepository = userRepository;
+    }
 
 
     @Transactional

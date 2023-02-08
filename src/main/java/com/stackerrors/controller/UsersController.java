@@ -3,6 +3,7 @@ package com.stackerrors.controller;
 import com.stackerrors.dtos.request.RegisterUserRequest;
 import com.stackerrors.dtos.request.UploadProfilePhotoRequest;
 import com.stackerrors.model.User;
+import com.stackerrors.service.UpdateProfilePhotoService;
 import com.stackerrors.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,11 @@ import java.io.IOException;
 public class UsersController {
 
     private final UserService userService;
+    private final UpdateProfilePhotoService profilePhotoService;
 
-    public UsersController(UserService userService) {
+    public UsersController(UserService userService, UpdateProfilePhotoService profilePhotoService) {
         this.userService = userService;
+        this.profilePhotoService = profilePhotoService;
     }
 
 
@@ -39,7 +42,7 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
    // @PreAuthorize("isAuthenticated()")
     public void uploadProfilePhoto(@Valid @ModelAttribute UploadProfilePhotoRequest request) throws IOException {
-        userService.uploadProfilePhoto(request);
+        profilePhotoService.uploadProfilePhoto(request);
     }
 
 

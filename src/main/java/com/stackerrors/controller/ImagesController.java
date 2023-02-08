@@ -18,12 +18,27 @@ public class ImagesController {
     private final ImageService service;
 
 
-    //   @PreAuthorize("#post.user.username == authentication.name")
-    @DeleteMapping("/delete/{imageId}")
-    public void deleteImage(
-            @PathVariable("imageId") int imageId) throws IOException {
-        service.deleteImage( imageId);
-    }
+//    //   @PreAuthorize("#post.user.username == authentication.name")
+//    @DeleteMapping("/deleteQuestionImage/{imageId}")
+//    public void deleteQuestionImage(
+//            @PathVariable("imageId") int imageId) throws IOException {
+//        service.deleteQuestionImage(imageId);
+//    }
+//
+//
+//    @DeleteMapping("/deleteErrorImage/{imageId}")
+//    public void deleteErrorImage(
+//            @PathVariable("imageId") int imageId) throws IOException {
+//        service.deleteErrorImage(imageId);
+//    }
+//
+//    @DeleteMapping("/deleteCommentImage/{imageId}")
+//    public void deleteCommentImage(
+//            @PathVariable("imageId") int imageId) throws IOException {
+//        service.deleteCommemtImage(imageId);
+//    }
+//
+
 
 
     @GetMapping("/{id}")

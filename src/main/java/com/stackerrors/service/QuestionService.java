@@ -17,13 +17,13 @@ import com.stackerrors.model.User;
 import com.stackerrors.repository.QuestionRepository;
 import com.stackerrors.repository.UserRepository;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,10 +43,11 @@ public class QuestionService {
     private final AuthService authService;
     private final UserRepository userRepository;
 
+
     public QuestionService(QuestionRepository questionRepository,
                            UserService userService,
                            TagService tagService,
-                           CloudServiceInter cloudServiceInter,
+                           @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
                            QuestionDtoConvertor questionDtoConvertor,
                            QuestionListItemDtoConvertor questionListItemDtoConvertor,
                            AuthService authService, UserRepository userRepository) {
@@ -118,6 +119,7 @@ public class QuestionService {
 
 
 
+
     //  refactor
     @Transactional
     public void uploadImage(UploadImageRequest request){
@@ -177,6 +179,9 @@ public class QuestionService {
 
 
     }
+
+
+
 
 
 
@@ -450,6 +455,9 @@ public class QuestionService {
                             .imageUrl(imageUrl)
                             .publishId(publishId)
                             .question(question)
+                            .user(null)
+                            .error(null)
+                            .comment(null)
                             .build()
             );
         }

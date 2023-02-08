@@ -1,19 +1,20 @@
 package com.stackerrors.service;
 
+import com.stackerrors.adapters.impl.AwsServiceImpl;
 import com.stackerrors.adapters.inter.CloudServiceInter;
 import com.stackerrors.dtos.request.RegisterUserRequest;
-import com.stackerrors.dtos.request.UploadProfilePhotoRequest;
 import com.stackerrors.exception.ErrorCode;
 import com.stackerrors.exception.GenericException;
 import com.stackerrors.model.Image;
 import com.stackerrors.model.Role;
 import com.stackerrors.model.User;
 import com.stackerrors.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.io.IOException;
+
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -22,18 +23,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CloudServiceInter cloudServiceInter;
-    private final ImageService imageService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AwsServiceImpl awsServiceImpl;
 
 
     public UserService(UserRepository userRepository,
-                       CloudServiceInter cloudServiceInter,
-                       ImageService imageService,
-                       BCryptPasswordEncoder bCryptPasswordEncoder) {
+                 @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
+                       BCryptPasswordEncoder bCryptPasswordEncoder, AwsServiceImpl awsServiceImpl) {
         this.userRepository = userRepository;
         this.cloudServiceInter = cloudServiceInter;
-        this.imageService = imageService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.awsServiceImpl = awsServiceImpl;
     }
 
     @Transactional
@@ -97,50 +97,6 @@ public class UserService {
     }
 
 
-
-    @Transactional
-    public void uploadProfilePhoto(UploadProfilePhotoRequest request) throws IOException {
-
-
-        //User user = authService.getAuthenticatedUser();
-
-
-        User user = null;
-
-        if( user.getImage()==null  &&  request.getProfilePhoto() != null){
-
-                Map<String, String> cloudData = cloudServiceInter.uploadImage(request.getProfilePhoto());
-                final String imageUrl = cloudData.get("secure_url");
-                final String publishId = cloudData.get("public_id");
-                Image pp = Image.builder()
-                        .publishId(publishId)
-                        .imageUrl(imageUrl)
-                        .user(user)
-                        .build();
-                user.setImage(pp);
-
-            userRepository.save(user);
-
-
-        }else if (user.getImage() != null  && request.getProfilePhoto() != null){
-
-            imageService.deleteImage(user.getImage().getId());
-
-                Map<String, String> cloudData = cloudServiceInter.uploadImage(request.getProfilePhoto());
-                final String imageUrl = cloudData.get("secure_url");
-                final String publishId = cloudData.get("public_id");
-                Image pp = Image.builder()
-                        .publishId(publishId)
-                        .imageUrl(imageUrl)
-                        .user(user)
-                        .build();
-                user.setImage(pp);
-            }
-
-
-
-            userRepository.save(user);
-        }
 
 
 

@@ -1,12 +1,9 @@
 package com.stackerrors.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email" , unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -37,7 +34,7 @@ public class User implements Serializable {
     private Role role;
 
     @Column(name = "creation_date")
-    private LocalDate creationDate;
+    private Date creationDate;
 
     @OneToOne(
             mappedBy = "user",
@@ -120,7 +117,7 @@ public class User implements Serializable {
 
     // constructors
     public User(int id, String username, String password,
-                String email, Role role, LocalDate creationDate, Image image,
+                String email, Role role, Date creationDate, Image image,
                 List<Question> questions, List<Error> errors,
                 List<Question> likesQuestions, List<Question> dissLikedQuestions,
                 List<Error> likedErrors, List<Comment> comments,
@@ -194,11 +191,11 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public LocalDate getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 

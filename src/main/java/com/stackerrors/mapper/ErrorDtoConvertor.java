@@ -2,16 +2,18 @@ package com.stackerrors.mapper;
 
 import com.stackerrors.dtos.response.ErrorDto;
 import com.stackerrors.model.Error;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class ErrorDtoConvertor {
 
     private final UserDtoConvertor userDtoConvertor;
+
+    public ErrorDtoConvertor(UserDtoConvertor userDtoConvertor) {
+        this.userDtoConvertor = userDtoConvertor;
+    }
 
 
     public ErrorDto convertToErrorDto(Error error){
@@ -23,7 +25,10 @@ public class ErrorDtoConvertor {
                         .map(n->n.getImageUrl())
                         .collect(Collectors.toList()))
                 .solution(error.getSolution())
-                .tags(error.getTags())
+                .tags(error.getTags()
+                        .stream()
+                        .map(n->n.getTagName())
+                        .collect(Collectors.toList()))
                 .title(error.getTitle())
                 .updatedDate(error.getUpdatedDate())
                 .userDto(userDtoConvertor.convertToUserDto(error.getUser()))

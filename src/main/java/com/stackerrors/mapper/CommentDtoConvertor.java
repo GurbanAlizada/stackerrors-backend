@@ -3,20 +3,20 @@ package com.stackerrors.mapper;
 
 import com.stackerrors.dtos.response.CommentDto;
 import com.stackerrors.model.Comment;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class CommentDtoConvertor {
 
     private final UserDtoConvertor userDtoConvertor;
     private final ImageDtoConvertor imageDtoConvertor;
 
-
-
+    public CommentDtoConvertor(UserDtoConvertor userDtoConvertor, ImageDtoConvertor imageDtoConvertor) {
+        this.userDtoConvertor = userDtoConvertor;
+        this.imageDtoConvertor = imageDtoConvertor;
+    }
 
 
     public CommentDto convertToCommentDto(Comment comment){
@@ -28,6 +28,10 @@ public class CommentDtoConvertor {
                 .questionId(comment.getQuestion().getId())
                 .questionTitle(comment.getQuestion().getTitle())
                 .likeCount(comment.getLikedUsers().size())
+                .likeUser(comment.getLikedUsers()
+                        .stream()
+                        .map(n->userDtoConvertor.convertToUserDto(n))
+                        .collect(Collectors.toList()))
                 .commentImages(comment.getCommentImages()
                         .stream()
                         .map(n->imageDtoConvertor.convertToImageDto(n))

@@ -40,6 +40,8 @@ public class SecurityConfig {
 
 
 
+    // hansiki permitAll ve admin huquqlari
+    // varsa qeyd et zaten qalanlari isAuthenticated olur
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

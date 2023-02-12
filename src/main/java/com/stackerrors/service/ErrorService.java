@@ -178,6 +178,16 @@ public class ErrorService {
 
 
 
+    public List<ErrorDto> getAllErrorsByUserId(int pageNo , int size){
+        User authenticatedUser = authService.getAuthenticatedUser();
+        Sort sort = Sort.by(Sort.Direction.ASC , "creationDate");
+
+        List<Error> errors = errorRepository.getAllByUser_Id(authenticatedUser.getId() ,  PageRequest.of(pageNo - 1, size , sort));
+        List<ErrorDto> result = errors.stream().map(n -> errorDtoConvertor.convertToErrorDto(n)).collect(Collectors.toList());
+        return result;
+    }
+
+
 
 
     protected Error findById(int id){

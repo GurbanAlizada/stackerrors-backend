@@ -367,11 +367,13 @@ public class QuestionService {
 
 
 
-    public List<QuestionListItemDto> getAllQuestionByUserId(){
+    public List<QuestionListItemDto> getAllQuestionByUserId(int pageNo , int size){
 
         User user = authService.getAuthenticatedUser();
+        Sort sort = Sort.by(Sort.Direction.ASC , "creationDate");
 
-        List<Question> questions = questionRepository.findAllByUser_IdAndDraftFalse(user.getId());
+
+        List<Question> questions = questionRepository.findAllByUser_IdAndDraftFalse(user.getId() , PageRequest.of(pageNo - 1, size , sort));
 
         List<QuestionListItemDto> result = questions.stream()
                 .map(n -> questionListItemDtoConvertor.convertToQuestionListItemDto(n))
@@ -381,11 +383,12 @@ public class QuestionService {
     }
 
 
-    public List<QuestionListItemDto> getAllMyQuestionFromDraft(){
+    public List<QuestionListItemDto> getAllMyQuestionFromDraft(int pageNo , int size){
 
         User user = authService.getAuthenticatedUser();
+        Sort sort = Sort.by(Sort.Direction.ASC , "creationDate");
 
-        List<Question> questions = questionRepository.findAllByUser_IdAndDraftTrue(user.getId());
+        List<Question> questions = questionRepository.findAllByUser_IdAndDraftTrue(user.getId() , PageRequest.of(pageNo - 1, size , sort));
 
         List<QuestionListItemDto> result = questions.stream()
                 .map(n -> questionListItemDtoConvertor.convertToQuestionListItemDto(n))

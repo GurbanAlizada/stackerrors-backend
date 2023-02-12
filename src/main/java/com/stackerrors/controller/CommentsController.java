@@ -47,8 +47,8 @@ public class CommentsController {
 
 
     @GetMapping("/getAllByUserId")
-    public ResponseEntity<List<CommentDto>> getAllByUserId(){
-        return ResponseEntity.ok(commentService.findAllByUser_Id());
+    public ResponseEntity<List<CommentDto>> getAllByUserId(@RequestParam int pageNo ,@RequestParam int size){
+        return ResponseEntity.ok(commentService.findAllByUser_Id(pageNo, size));
     }
 
 
@@ -57,6 +57,14 @@ public class CommentsController {
     @GetMapping("/like")
     public void likeComment(@RequestParam("commentId") int commentId){
         commentService.likeComment(commentId);
+    }
+
+
+
+    @PostMapping("/verifyComment")
+    public void verifyComment(int commentId){
+        // Yalniz questinun yiyesi bunu verify ede biler
+
     }
 
 

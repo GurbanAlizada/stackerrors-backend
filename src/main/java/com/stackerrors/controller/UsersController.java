@@ -1,12 +1,12 @@
 package com.stackerrors.controller;
 
+import com.stackerrors.dtos.request.ChangePasswordRequest;
 import com.stackerrors.dtos.request.RegisterUserRequest;
 import com.stackerrors.dtos.request.UploadProfilePhotoRequest;
-import com.stackerrors.model.User;
-import com.stackerrors.service.UpdateProfilePhotoService;
+import com.stackerrors.service.UpdateProfileService;
 import com.stackerrors.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,19 +18,19 @@ import java.io.IOException;
 public class UsersController {
 
     private final UserService userService;
-    private final UpdateProfilePhotoService profilePhotoService;
+    private final UpdateProfileService profileService;
 
-    public UsersController(UserService userService, UpdateProfilePhotoService profilePhotoService) {
+    public UsersController(UserService userService, UpdateProfileService profilePhotoService) {
         this.userService = userService;
-        this.profilePhotoService = profilePhotoService;
+        this.profileService = profilePhotoService;
     }
 
 
     @PostMapping(value = "/register" ,
             consumes = {"multipart/form-data" },
             produces = "application/json")
-    @ResponseStatus(HttpStatus.OK)
-    //@PreAuthorize("permitAll()")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("permitAll()")
     public void register(@Valid @ModelAttribute RegisterUserRequest request){
         userService.registerUser(request);
     }
@@ -40,19 +40,28 @@ public class UsersController {
             consumes = {"multipart/form-data" },
             produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-   // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public void uploadProfilePhoto(@Valid @ModelAttribute UploadProfilePhotoRequest request) throws IOException {
-        profilePhotoService.uploadProfilePhoto(request);
+        profileService.uploadProfilePhoto(request);
     }
 
 
-
-
-    @GetMapping("/getUserDetail")
-   // @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<User> getUserDetail(int id){
-        return ResponseEntity.ok(userService.findByUserId(id));
+    @PutMapping("/changeUsername")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    public void changeUsername(@RequestParam String newUsername){
+        profileService.changeUsername(newUsername);
     }
+
+
+    @PutMapping("/changePassword")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("isAuthenticated()")
+    public void changePassword(@RequestBody ChangePasswordRequest request){
+        profileService.changePassword(request);
+    }
+
+
 
 
 

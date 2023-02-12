@@ -151,14 +151,13 @@ public class QuestionsController {
 
 
     @GetMapping("/getAllQuestionsByUserId")
-    //  @PreAuthorize("permitAll()")
-    public ResponseEntity<List<QuestionListItemDto>> getAllQuestionsByUserId(){
-        return ResponseEntity.ok(service.getAllQuestionByUserId());
+    public ResponseEntity<List<QuestionListItemDto>> getAllQuestionsByUserId(int pageNo , int pageSize){
+        return ResponseEntity.ok(service.getAllQuestionByUserId(pageNo, pageSize));
     }
 
     @GetMapping("/getAllMyQuestionFromDraft")
-    public ResponseEntity<List<QuestionListItemDto>> getAllMyQuestionFromDraft(){
-        return ResponseEntity.ok(service.getAllMyQuestionFromDraft());
+    public ResponseEntity<List<QuestionListItemDto>> getAllMyQuestionFromDraft(int pageNo , int size){
+        return ResponseEntity.ok(service.getAllMyQuestionFromDraft(pageNo, size));
     }
 
 

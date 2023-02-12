@@ -5,19 +5,23 @@ import com.stackerrors.dtos.response.QuestionCommentDto;
 import com.stackerrors.dtos.response.QuestionDto;
 import com.stackerrors.model.Comment;
 import com.stackerrors.model.Question;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class QuestionDtoConvertor {
 
 
     private final UserDtoConvertor userDtoConvertor;
     private final ImageDtoConvertor imageDtoConvertor;
+
+    public QuestionDtoConvertor(UserDtoConvertor userDtoConvertor,
+                                ImageDtoConvertor imageDtoConvertor) {
+        this.userDtoConvertor = userDtoConvertor;
+        this.imageDtoConvertor = imageDtoConvertor;
+    }
 
 
     public QuestionDto convertToQuestionDto(Question question){
@@ -28,11 +32,13 @@ public class QuestionDtoConvertor {
                 .isActive(question.isActive())
                 .questionId(question.getId())
                 .text(question.getDescription())
-                .images(question.getQuestionImages().stream()
+                .images(question.getQuestionImages()
+                        .stream()
                         .map(n->imageDtoConvertor.convertToImageDto(n))
                         .collect(Collectors.toList()))
                 .comments(convertToQuestionCommentDtoList(question.getComments()))
-                .tagNames(question.getTags().stream()
+                .tagNames(question.getTags()
+                        .stream()
                         .map(n->n.getTagName())
                         .collect(Collectors.toList()))
                 .title(question.getTitle())
@@ -50,17 +56,19 @@ public class QuestionDtoConvertor {
 
 
     public List<QuestionCommentDto> convertToQuestionCommentDtoList(List<Comment> comments){
-        return comments.stream()
+        return comments
+                .stream()
                 .map(n->QuestionCommentDto.builder()
                         .id(n.getId())
-                        .commentImages(n.getCommentImages().stream()
+                        .commentImages(n.getCommentImages()
+                                .stream()
                                 .map(m->imageDtoConvertor.convertToImageDto(m))
                                 .collect(Collectors.toList()))
                         .text(n.getText())
                         .isVerified(n.isVerified())
                         .creationDate(n.getCreationDate())
                         .updatedDate(n.getUpdateDate())
-                       .likedCount(n.getLikedUsers().size())
+                        .likedCount(n.getLikedUsers().size())
                         .user(userDtoConvertor.convertToUserDto(n.getUser()))
                         .build())
                 .collect(Collectors.toList());

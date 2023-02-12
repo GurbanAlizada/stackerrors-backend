@@ -7,6 +7,7 @@ import com.stackerrors.dtos.response.TagDto;
 import com.stackerrors.service.TagService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +26,7 @@ public class TagsController {
     }
 
 
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/admin/save")
     @ResponseStatus(HttpStatus.CREATED)
     public void save(@Valid @RequestBody SaveTagRequest request){
@@ -35,15 +36,14 @@ public class TagsController {
 
 
     @GetMapping("/getById/{id}")
-    //@PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<TagDto> getById(@PathVariable("id") int id){
         return ResponseEntity.ok(tagService.getById(id));
     }
 
 
     @GetMapping("/getAllTags")
-    //@PreAuthorize("permitAll()")
-    //@PreAuthorize("isAuthenticated()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<TagDto>> getAllTags(@RequestParam("pageNo") int pageNo ,
                                                    @RequestParam("size") int size){
         return ResponseEntity.ok(tagService.getAllTags(pageNo, size));
@@ -51,7 +51,7 @@ public class TagsController {
 
 
     @GetMapping("/findByTagsOrderByName")
-    //@PreAuthorize("permitAll()")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<TagDto>> findByTagsOrderByName(@RequestParam("pageNo") int pageNo ,
                                                         @RequestParam("size") int size){
         return ResponseEntity.ok(tagService.findByTagsOrderByName(pageNo, size));
@@ -60,7 +60,7 @@ public class TagsController {
 
 
     @DeleteMapping("/admin/delete/{id}")
-    //@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     public void deleteTag(@PathVariable("id") int id){
        tagService.deleteTag(id);
@@ -69,7 +69,7 @@ public class TagsController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/admin/updateTag")
-   // @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void updateTag(@RequestBody @Valid UpdateTagRequest request){
         tagService.updateTag(request);
     }

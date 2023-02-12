@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Service
@@ -27,6 +28,14 @@ public class ImageService {
         this.cloudServiceInter = cloudServiceInter;
     }
 
+
+
+    public void deleteImage(int id) throws IOException {
+        Image image = imageRepository.getById(id);
+        String publishId = image.getPublishId();
+        cloudServiceInter.deleteImage(publishId);
+        imageRepository.delete(image);
+    }
 
 
 
@@ -74,7 +83,7 @@ public class ImageService {
 
 
     public ImageDto getImage(int id){
-        final Image fromDb = findById(id);
+        final Image fromDb = getById(id);
         final ImageDto dto = ImageDto.builder()
                 .id(fromDb.getId())
                 //.questionId(fromDb.getQuestion().getId())
@@ -91,7 +100,7 @@ public class ImageService {
 
 
 
-    protected Image findById(int id){
+    protected Image getById(int id){
         final Image image = imageRepository.findById(id).orElseThrow(
                 () ->
                         GenericException.builder()

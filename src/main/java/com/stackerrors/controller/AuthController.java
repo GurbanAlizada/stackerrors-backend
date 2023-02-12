@@ -7,6 +7,7 @@ import com.stackerrors.dtos.response.TokenResponseDto;
 import com.stackerrors.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -26,6 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<TokenResponseDto> login(@RequestBody @Valid LoginRequest request){
 
         return ResponseEntity.ok(authService.login(request));
@@ -34,6 +36,7 @@ public class AuthController {
 
 
     @PostMapping("/forgotPassword")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email , HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
         authService.sendForgotPasswordEmail(email , request);
         return  ResponseEntity.status(HttpStatus.OK).body("Check your mail");
@@ -42,6 +45,7 @@ public class AuthController {
 
 
     @PostMapping("/resetPassword")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?>  resetPassword(@RequestBody @Valid ResetPasswordRequest request){
         authService.resetPassword(request);
         return ResponseEntity.status(HttpStatus.OK).body("Success");
@@ -49,12 +53,15 @@ public class AuthController {
 
 
     @PostMapping("/sendVerificationCode")
+    @PreAuthorize("isAuthenticated()")
+    //   @PreAuthorize("#post.user.username == authentication.name")
     public ResponseEntity<?> sendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException {
          authService.sendEmailVerificationCode(email);
          return ResponseEntity.status(HttpStatus.OK).body("Check your mail");
     }
 
     @GetMapping("/verifyEmail")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> verifyEmail(@RequestParam("verificationCode") Integer verificationCode){
          authService.verifyEmail(verificationCode);
          return ResponseEntity.status(HttpStatus.OK).body("Your account has been verified");

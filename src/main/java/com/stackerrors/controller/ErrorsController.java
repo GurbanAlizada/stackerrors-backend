@@ -86,5 +86,10 @@ public class ErrorsController {
 
 
 
+    @GetMapping("/getAllErrorsByUserId")
+    public ResponseEntity<List<ErrorDto>> getAllErrorsByUserId(@RequestParam("pageNo") int pageNo ,@RequestParam("size") int size){
+        return  ResponseEntity.ok(errorService.getAllErrorsByUserId(pageNo , size));
+    }
+
 
 }

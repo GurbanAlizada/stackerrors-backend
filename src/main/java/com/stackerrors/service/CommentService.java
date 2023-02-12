@@ -15,6 +15,8 @@ import com.stackerrors.model.User;
 import com.stackerrors.repository.CommentRepository;
 import com.stackerrors.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -121,11 +123,13 @@ public class CommentService {
 
 
 
-    public List<CommentDto> findAllByUser_Id(){
+    public List<CommentDto> findAllByUser_Id(int pageNo , int size){
 
         User user = authService.getAuthenticatedUser();
+        Sort sort = Sort.by(Sort.Direction.ASC , "creationDate");
 
-        List<Comment> comments = commentRepository.findAllByUser_Id(user.getId());
+
+        List<Comment> comments = commentRepository.findAllByUser_Id(user.getId() ,  PageRequest.of(pageNo - 1, size , sort));
 
         List<CommentDto> result = comments.stream()
                 .map(n->commentDtoConvertor.convertToCommentDto(n))

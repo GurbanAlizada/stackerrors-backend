@@ -3,8 +3,10 @@ package com.stackerrors.service;
 import com.stackerrors.adapters.impl.AwsServiceImpl;
 import com.stackerrors.adapters.inter.CloudServiceInter;
 import com.stackerrors.dtos.request.RegisterUserRequest;
+import com.stackerrors.dtos.response.UserDetailsDto;
 import com.stackerrors.exception.ErrorCode;
 import com.stackerrors.exception.GenericException;
+import com.stackerrors.mapper.UserDetailsDtoConvertor;
 import com.stackerrors.model.Image;
 import com.stackerrors.model.Role;
 import com.stackerrors.model.User;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -25,15 +28,17 @@ public class UserService {
     private final CloudServiceInter cloudServiceInter;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AwsServiceImpl awsServiceImpl;
+    private final UserDetailsDtoConvertor userDetailsDtoConvertor;
 
 
     public UserService(UserRepository userRepository,
-                 @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
-                       BCryptPasswordEncoder bCryptPasswordEncoder, AwsServiceImpl awsServiceImpl) {
+                       @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
+                       BCryptPasswordEncoder bCryptPasswordEncoder, AwsServiceImpl awsServiceImpl, UserDetailsDtoConvertor userDetailsDtoConvertor) {
         this.userRepository = userRepository;
         this.cloudServiceInter = cloudServiceInter;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.awsServiceImpl = awsServiceImpl;
+        this.userDetailsDtoConvertor = userDetailsDtoConvertor;
     }
 
     @Transactional
@@ -50,7 +55,7 @@ public class UserService {
 
 
         User user = User.builder()
-                .creationDate(LocalDate.now())
+                .creationDate(new Date(System.currentTimeMillis()))
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .role(Role.USER)
@@ -100,10 +105,13 @@ public class UserService {
 
 
 
-    public User findByUserId(int userId){
+
+
+    public UserDetailsDto findByUserId(int userId){
 
         User user = findById(userId);
-        return user;
+        UserDetailsDto result = userDetailsDtoConvertor.convert(user);
+        return result;
     }
 
 
@@ -121,6 +129,12 @@ public class UserService {
                                 .build()
                 );
     }
+
+
+
+
+
+
 
 
 

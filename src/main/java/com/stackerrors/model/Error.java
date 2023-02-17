@@ -1,7 +1,6 @@
 package com.stackerrors.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 
 import javax.persistence.*;
@@ -32,8 +31,7 @@ public class Error implements Serializable {
     private Date updatedDate;
 
 
-    @OneToMany(mappedBy = "error" , cascade = { CascadeType.PERSIST , CascadeType.MERGE , CascadeType.REMOVE })
-    //@JsonIgnore
+    @OneToMany(mappedBy = "error" , cascade = { CascadeType.PERSIST , CascadeType.MERGE , CascadeType.REMOVE }  )
     private List<Image> errorImages;
 
 
@@ -42,9 +40,7 @@ public class Error implements Serializable {
     private User user;
 
 
-    @ManyToMany(cascade =
-            { CascadeType.PERSIST , CascadeType.MERGE , CascadeType.REMOVE }
-    )
+    @ManyToMany
     @JoinTable(
             name = "error_tag",
             joinColumns = @JoinColumn(name = "error_id"),
@@ -54,10 +50,15 @@ public class Error implements Serializable {
 
 
 
+    @ManyToMany
+    @JoinTable(
+            name = "errors_likes",
+            joinColumns = @JoinColumn(name = "error_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> likedErrorUsers;
 
-    @ManyToMany(mappedBy = "likedErrors" , cascade = CascadeType.ALL)
-    //@JsonIgnore
-    private List<User> likedUsers;
+
 
 
     // all and no args contructors
@@ -73,7 +74,7 @@ public class Error implements Serializable {
         this.errorImages = errorImages;
         this.user = user;
         this.tags = tags;
-        this.likedUsers = likedUsers;
+        this.likedErrorUsers = likedUsers;
     }
 
     public Error() {
@@ -154,11 +155,11 @@ public class Error implements Serializable {
     }
 
     public List<User> getLikedUsers() {
-        return likedUsers;
+        return likedErrorUsers;
     }
 
     public void setLikedUsers(List<User> likedUsers) {
-        this.likedUsers = likedUsers;
+        this.likedErrorUsers = likedUsers;
     }
 
     @Override

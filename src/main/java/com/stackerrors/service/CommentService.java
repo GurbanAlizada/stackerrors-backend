@@ -4,6 +4,7 @@ package com.stackerrors.service;
 import com.stackerrors.adapters.inter.CloudServiceInter;
 import com.stackerrors.dtos.request.AddCommentRequest;
 import com.stackerrors.dtos.request.UpdateCommentRequest;
+import com.stackerrors.dtos.request.UploadCommentImageRequest;
 import com.stackerrors.dtos.response.CommentDto;
 import com.stackerrors.exception.ErrorCode;
 import com.stackerrors.exception.GenericException;
@@ -13,7 +14,6 @@ import com.stackerrors.model.Image;
 import com.stackerrors.model.Question;
 import com.stackerrors.model.User;
 import com.stackerrors.repository.CommentRepository;
-import com.stackerrors.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,10 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,20 +35,19 @@ public class CommentService {
     private final CloudServiceInter cloudServiceInter;
     private final CommentDtoConvertor commentDtoConvertor;
     private final AuthService authService;
-    private final UserRepository userRepository;
+    private final ImageService imageService;
 
     public CommentService(CommentRepository commentRepository,
                           QuestionService questionService,
-                          UserService userService,
-                   @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
+                          @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
                           CommentDtoConvertor commentDtoConvertor,
-                          AuthService authService, UserRepository userRepository) {
+                          AuthService authService, ImageService imageService) {
         this.commentRepository = commentRepository;
         this.questionService = questionService;
         this.cloudServiceInter = cloudServiceInter;
         this.commentDtoConvertor = commentDtoConvertor;
         this.authService = authService;
-        this.userRepository = userRepository;
+        this.imageService = imageService;
     }
 
 
@@ -154,11 +151,15 @@ public class CommentService {
             final Map<String , String> cloudData = cloudServiceInter.uploadImage(file);
             final String imageUrl = cloudData.get("secure_url");
             final String publishId = cloudData.get("public_id");
+
             images.add(
                     Image.builder()
                             .imageUrl(imageUrl)
                             .publishId(publishId)
                             .comment(comment)
+                            .error(null)
+                            .user(null)
+                            .question(null)
                             .build()
             );
         }
@@ -184,8 +185,8 @@ public class CommentService {
             }
         }
 
-        user.getLikes().add(comment);
-        userRepository.save(user);
+        comment.getLikedUsers().add(user);
+        commentRepository.save(comment);
     }
 
 
@@ -207,7 +208,78 @@ public class CommentService {
     }
 
 
+    public void verifyComment(int questionId , int commentId){
+        User user = authService.getAuthenticatedUser();
+        Comment comment = findById(commentId);
+        Question question = questionService.findById(questionId);
 
+        if (question.getUser().getId() != user.getId() ){
+            throw GenericException.builder()
+                    .errorCode(ErrorCode.ACCESS_DENIED)
+                    .httpStatus(HttpStatus.FORBIDDEN)
+                    .errorMessage("Yalniz oz commentini deyise bilersiniz ")
+                    .build();
+        }
+        comment.setVerified(true);
+        commentRepository.save(comment);
+    }
+
+
+
+
+
+    @Transactional
+    public void uploadCommentImage(UploadCommentImageRequest request) {
+        Comment comment = findById(request.getCommentId());
+
+        if(request.getFiles() != null) {
+            List<Image> images = commentsImages(request.getFiles() , comment);
+            comment.setCommentImages(images);
+            System.out.println("Deyer  :  "+images.get(0).getImageUrl());
+        }
+
+        commentRepository.save(comment);
+    }
+
+
+    public void deleteCommentImage(int imageId) throws IOException {
+        imageService.deleteImage(imageId);
+    }
+
+
+
+
+
+    public List<CommentDto> getAllCommentsByQuestionIsOrderByLikeCount(int questionId , int pageNo, int size) {
+
+
+
+        List<Comment> comments = commentRepository.findAllByQuestion_Id(questionId, PageRequest.of(pageNo - 1, size));
+        List<CommentDto> result = comments
+                .stream()
+                .map(n -> commentDtoConvertor.convertToCommentDto(n))
+                .sorted( (o1,o2) -> (o2.getLikeCount()).compareTo(o1.getLikeCount() ))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+
+    public List<CommentDto> getAllCommentsByQuestionIsOrderByDate(int questionId , int pageNo, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC , "creationDate");
+        List<Comment> comments = commentRepository.findAllByQuestion_Id(questionId, PageRequest.of(pageNo - 1, size, sort));
+        List<CommentDto> result = comments
+                .stream()
+                .map(n -> commentDtoConvertor.convertToCommentDto(n))
+                .collect(Collectors.toList());
+        return result;
+    }
+
+    public void undoLikeCommemt(int commentId) {
+        Comment comment = findById(commentId);
+        User user = authService.getAuthenticatedUser();
+        comment.getLikedUsers().remove(user);
+        commentRepository.save(comment);
+    }
 
 
 }

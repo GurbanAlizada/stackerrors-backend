@@ -1,6 +1,5 @@
 package com.stackerrors.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 
 import javax.persistence.*;
@@ -14,6 +13,8 @@ import java.util.List;
 @Entity
 @Table(name = "comments")
 public class Comment implements Serializable {
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,25 +31,31 @@ public class Comment implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "question_id")
-    //@JsonIgnore
     private Question question;
 
 
     @Column(name = "is_verified")
     private boolean isVerified;
 
+
     @Column(name = "creation_date")
     private Date creationDate;
 
     private Date updateDate;
 
-    @OneToMany(mappedBy = "comment" , cascade = {CascadeType.MERGE , CascadeType.PERSIST , CascadeType.REMOVE})
+
+    @OneToMany(mappedBy = "comment" , cascade = {CascadeType.PERSIST , CascadeType.MERGE,  CascadeType.REMOVE})
     private List<Image> commentImages;
 
 
 
-    @ManyToMany(mappedBy = "likes" , cascade = CascadeType.ALL)
-    private List<User> likedUsers = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "comment_likes",
+            joinColumns = @JoinColumn(name = "comment_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> likedCommentUsers ;
 
 
     // all and no args constructors
@@ -63,7 +70,7 @@ public class Comment implements Serializable {
         this.creationDate = creationDate;
         this.updateDate = updateDate;
         this.commentImages = commentImages;
-        this.likedUsers = likedUsers;
+        this.likedCommentUsers = likedUsers;
     }
 
     public Comment() {
@@ -136,10 +143,10 @@ public class Comment implements Serializable {
     }
 
     public List<User> getLikedUsers() {
-        return likedUsers;
+        return likedCommentUsers;
     }
 
     public void setLikedUsers(List<User> likedUsers) {
-        this.likedUsers = likedUsers;
+        this.likedCommentUsers = likedUsers;
     }
 }

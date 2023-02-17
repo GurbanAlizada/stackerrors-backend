@@ -1,6 +1,6 @@
 package com.stackerrors.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Builder;
 
 import javax.persistence.*;
@@ -11,7 +11,6 @@ import java.util.List;
 
 
 
-@Builder
 @Entity
 @Table(name = "questions")
 public class Question implements Serializable {
@@ -30,6 +29,8 @@ public class Question implements Serializable {
 
     @Column(name = "draft")
     private boolean draft;
+
+
 
 
     @Column(name = "views")
@@ -52,7 +53,21 @@ public class Question implements Serializable {
     private User user;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "question" , cascade = {CascadeType.PERSIST ,CascadeType.MERGE, CascadeType.REMOVE })
+    private List<Image> questionImages;
+
+
+
+    @OneToMany(mappedBy = "question" , cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
+
+
+
+    // ManyToMany-de save edilecek is mapped by olan terefde yox jointable
+    // iliskini elan etdiyimiz yerde aparilir
+    // yeni burada questionRepo uzerinden taglari save etdik
+    @ManyToMany
     @JoinTable(
             name = "question_tag",
             joinColumns = @JoinColumn(name = "question_id"),
@@ -61,23 +76,22 @@ public class Question implements Serializable {
     private List<Tag> tags = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "question" , cascade = { CascadeType.PERSIST , CascadeType.MERGE , CascadeType.REMOVE })
-    //@JsonIgnore
-    private List<Image> questionImages;
-
-
-
-    @OneToMany(mappedBy = "question" , cascade = { CascadeType.PERSIST , CascadeType.MERGE , CascadeType.REMOVE } )
-    // @JsonIgnore
-    private List<Comment> comments;
-
-
-    @ManyToMany(mappedBy = "likesQuestions" , cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "question_likes",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<User> likedUsers;
 
 
 
-    @ManyToMany(mappedBy = "dissLikedQuestions" , cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "question_dissLikes",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<User> dissLikedUsers;
 
 

@@ -31,7 +31,7 @@ public class ImageService {
 
 
     public void deleteImage(int id) throws IOException {
-        Image image = imageRepository.getById(id);
+        Image image = getByImageId(id);
         String publishId = image.getPublishId();
         cloudServiceInter.deleteImage(publishId);
         imageRepository.delete(image);
@@ -40,50 +40,8 @@ public class ImageService {
 
 
 
-
-//    @Transactional
-//    public void deleteErrorImage( int imageId) throws IOException {
-//        User user = authService.getAuthenticatedUser();
-//        final Image fromDb = findById(imageId);
-//        if (user.getId() != fromDb.getError().getUser().getId()){
-//            throw GenericException.builder()
-//                    .errorMessage("Sekli silmek huququnuz yoxdur")
-//                    .httpStatus(HttpStatus.BAD_REQUEST)
-//                    .errorCode(ErrorCode.ACCESS_DENIED)
-//                    .build();
-//        }
-//        imageRepository.delete(fromDb);
-//        cloudServiceInter.deleteImage(fromDb.getPublishId());
-//    }
-//
-//
-//    @Transactional
-//    public void deleteCommemtImage( int imageId) throws IOException {
-//        User user = authService.getAuthenticatedUser();
-//        final Image fromDb = findById(imageId);
-//        if (user.getId() != fromDb.getComment().getUser().getId()){
-//            throw GenericException.builder()
-//                    .errorMessage("Sekli silmek huququnuz yoxdur")
-//                    .httpStatus(HttpStatus.BAD_REQUEST)
-//                    .errorCode(ErrorCode.ACCESS_DENIED)
-//                    .build();
-//        }
-//        imageRepository.delete(fromDb);
-//        cloudServiceInter.deleteImage(fromDb.getPublishId());
-//    }
-//
-//
-//
-//
-
-
-
-
-
-
-
     public ImageDto getImage(int id){
-        final Image fromDb = getById(id);
+        final Image fromDb = getByImageId(id);
         final ImageDto dto = ImageDto.builder()
                 .id(fromDb.getId())
                 //.questionId(fromDb.getQuestion().getId())
@@ -100,7 +58,7 @@ public class ImageService {
 
 
 
-    protected Image getById(int id){
+    protected Image getByImageId(int id){
         final Image image = imageRepository.findById(id).orElseThrow(
                 () ->
                         GenericException.builder()

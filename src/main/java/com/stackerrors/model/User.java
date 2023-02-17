@@ -9,7 +9,7 @@ import java.util.List;
 
 
 
-@Builder
+
 @Entity
 @Table(name = "users")
 //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler","questions"})
@@ -36,67 +36,46 @@ public class User implements Serializable {
     @Column(name = "creation_date")
     private Date creationDate;
 
-    @OneToOne(
-            mappedBy = "user",
-            cascade = { CascadeType.PERSIST ,
-                    CascadeType.MERGE ,
-                    CascadeType.REMOVE }
-    )
+
+    /*, cascade = CascadeType.REMOVE */
+    @OneToOne(mappedBy = "user" )
     private Image image;
 
 
-    @OneToMany(mappedBy = "user"  )
-    //@JsonIgnore
+    @OneToMany(mappedBy = "user" )
     private List<Question> questions;
 
+    /* , cascade = CascadeType.REMOVE*/
     @OneToMany(mappedBy = "user" )
-    //@JsonIgnore
     private List<Error> errors;
 
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "question_likes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "question_id")
-    )
-    private List<Question> likesQuestions;
-
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "question_dissLikes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "question_id")
-    )
-    private List<Question> dissLikedQuestions;
-
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "errors_likes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "error_id")
-    )
-    private List<Error> likedErrors;
-
-
-
-
-    @OneToMany(mappedBy = "user")
-    //@JsonIgnore
+    /*, cascade = CascadeType.REMOVE */
+    @OneToMany(mappedBy = "user" )
     private List<Comment> comments;
 
 
 
+    @ManyToMany(mappedBy = "likedUsers"  )
+    private List<Question> likesQuestions;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "comment_likes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "comment_id")
-    )
+
+    @ManyToMany(mappedBy = "dissLikedUsers" )
+    private List<Question> dissLikedQuestions;
+
+
+
+
+
+    @ManyToMany(mappedBy = "likedErrorUsers")
+    private List<Error> likedErrors;
+
+
+
+    @ManyToMany(mappedBy = "likedCommentUsers"  )
     private List<Comment> likes;
+
+
+
 
 
     @Column(name = "forgot_password_token")

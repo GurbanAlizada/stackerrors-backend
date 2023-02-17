@@ -3,6 +3,7 @@ package com.stackerrors.service;
 
 import com.stackerrors.adapters.inter.CloudServiceInter;
 import com.stackerrors.dtos.request.UpdateErrorRequest;
+import com.stackerrors.dtos.request.UploadErrorImageRequest;
 import com.stackerrors.dtos.response.ErrorDto;
 import com.stackerrors.exception.ErrorCode;
 import com.stackerrors.exception.GenericException;
@@ -10,7 +11,6 @@ import com.stackerrors.mapper.ErrorDtoConvertor;
 import com.stackerrors.model.Error;
 import com.stackerrors.repository.ErrorRepository;
 import com.stackerrors.dtos.request.AddErrorRequest;
-import com.stackerrors.repository.UserRepository;
 import com.stackerrors.model.Image;
 import com.stackerrors.model.Tag;
 import com.stackerrors.model.User;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,20 +37,20 @@ public class ErrorService {
     private final CloudServiceInter cloudServiceInter;
     private final AuthService authService;
     private final ErrorDtoConvertor errorDtoConvertor;
-    private final UserRepository userRepository;
+    private final ImageService imageService;
 
     public ErrorService(ErrorRepository errorRepository,
                         TagService tagService,
-                   @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
+                        @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
                         AuthService authService,
                         ErrorDtoConvertor errorDtoConvertor,
-                        UserRepository userRepository) {
+                        ImageService imageService) {
         this.errorRepository = errorRepository;
         this.tagService = tagService;
         this.cloudServiceInter = cloudServiceInter;
         this.authService = authService;
         this.errorDtoConvertor = errorDtoConvertor;
-        this.userRepository = userRepository;
+        this.imageService = imageService;
     }
 
 
@@ -140,7 +141,7 @@ public class ErrorService {
 
 
     public List<ErrorDto> getAllOrderByDate(int pageNo , int size){
-        Sort sort = Sort.by(Sort.Direction.ASC , "creationDate");
+        Sort sort = Sort.by(Sort.Direction.DESC , "creationDate");
         List<Error> errors = errorRepository.findAll(PageRequest.of(pageNo - 1, size , sort)).getContent();
         List<ErrorDto> result = errors.stream().map(n -> errorDtoConvertor.convertToErrorDto(n)).collect(Collectors.toList());
         return result;
@@ -172,9 +173,21 @@ public class ErrorService {
             }
         }
 
-        user.getLikedErrors().add(error);
-        userRepository.save(user);
+        error.getLikedUsers().add(user);
+        errorRepository.save(error);
+
     }
+
+
+
+    @Transactional
+    public void undoLikeError(int errorId) {
+        Error error = findById(errorId);
+        User user  = authService.getAuthenticatedUser();
+        error.getLikedUsers().remove(user);
+        errorRepository.save(error);
+    }
+
 
 
 
@@ -238,6 +251,36 @@ public class ErrorService {
         }
 
         return tags;
+    }
+
+
+
+    @Transactional
+    public void uploadErrorImage(UploadErrorImageRequest request) {
+        Error error = findById(request.getErrorId());
+        if(request.getFiles()!=null) {
+            List<Image> images = errorsImages(request.getFiles() , error);
+            error.setErrorImages(images);
+        }
+
+        errorRepository.save(error);
+    }
+
+
+
+    @Transactional
+    public void deleteErrorImage(int imageId , int errorId) throws IOException {
+        User user  = authService.getAuthenticatedUser();
+
+        Error error = findById(errorId);
+
+        if (user.getId() != error.getUser().getId()){
+            throw GenericException.builder()
+                    .errorMessage("Qardas diresme yalniz oz paylasdigin erroru sile bilersen")
+                    .errorCode(ErrorCode.ACCESS_DENIED)
+                    .build();
+        }
+        imageService.deleteImage(imageId);
     }
 
 

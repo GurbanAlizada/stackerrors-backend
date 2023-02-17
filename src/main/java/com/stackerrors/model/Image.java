@@ -1,6 +1,5 @@
 package com.stackerrors.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 
 import javax.persistence.*;
@@ -28,13 +27,11 @@ public class Image implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "question_id" )
-    //@JsonIgnore
     private Question question;
 
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
-    //@JsonIgnore
     private Comment comment;
 
 
@@ -45,7 +42,6 @@ public class Image implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    //@JsonIgnore
     private User user ;
 
 

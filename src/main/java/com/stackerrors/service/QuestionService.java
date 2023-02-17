@@ -17,13 +17,17 @@ import com.stackerrors.model.User;
 import com.stackerrors.repository.QuestionRepository;
 import com.stackerrors.repository.UserRepository;
 import lombok.SneakyThrows;
+import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +46,7 @@ public class QuestionService {
     private final QuestionListItemDtoConvertor questionListItemDtoConvertor;
     private final AuthService authService;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
 
     public QuestionService(QuestionRepository questionRepository,
@@ -50,7 +55,7 @@ public class QuestionService {
                            @Qualifier("cloudinaryServiceImpl") CloudServiceInter cloudServiceInter,
                            QuestionDtoConvertor questionDtoConvertor,
                            QuestionListItemDtoConvertor questionListItemDtoConvertor,
-                           AuthService authService, UserRepository userRepository) {
+                           AuthService authService, UserRepository userRepository, ImageService imageService) {
         this.questionRepository = questionRepository;
         this.userService = userService;
         this.tagService = tagService;
@@ -59,6 +64,7 @@ public class QuestionService {
         this.questionListItemDtoConvertor = questionListItemDtoConvertor;
         this.authService = authService;
         this.userRepository = userRepository;
+        this.imageService = imageService;
     }
 
 
@@ -68,17 +74,17 @@ public class QuestionService {
         User user = authService.getAuthenticatedUser();
         List<Tag> tags = questionsTags(request.getTags());
 
-        Question question = Question.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .user(user)
-                .answered(false)
-                .creationDate(new Date(System.currentTimeMillis()))
-                .isActive(true)
-                .draft(request.isDraft())
-                .views(0)
-                .tags(tags)
-                .build();
+        Question question = new Question();
+                question.setTitle(request.getTitle());
+                question.setDescription(request.getDescription());
+                question.setUser(user);
+                question.setAnswered(false);
+                question.setCreationDate(new Date(System.currentTimeMillis()));
+                question.setActive(true);
+                question.setDraft(request.isDraft());
+                question.setViews(0);
+                question.setTags(tags);
+
 
         if(request.getFiles()!=null) {
             List<Image> images = questionsImages(request.getFiles() , question);
@@ -120,28 +126,38 @@ public class QuestionService {
 
 
 
-    //  refactor
     @Transactional
     public void uploadImage(UploadImageRequest request){
-
-        User user = authService.getAuthenticatedUser();
         Question question = findById(request.getQuestionId());
 
-
-        if (question.getUser().getId() != user.getId()){
-
-            throw GenericException.builder()
-                    .errorMessage("Sekil yuklemek huququna sahib deyilsiniz")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
-                    .errorCode(ErrorCode.ACCESS_DENIED)
-                    .build();
-        }
 
         if (request.getFiles() != null){
             List<Image> images = questionsImages(request.getFiles() , question);
             question.setQuestionImages(images);
         }
         questionRepository.save(question);
+    }
+
+
+
+    @Transactional
+    public void deleteImage(int imageId , int questionId) throws IOException {
+
+
+//        User user = authService.getAuthenticatedUser();
+//        Question question = findById(questionId);
+//
+//
+//        if (question.getUser().getId() != user.getId()){
+//
+//            throw GenericException.builder()
+//                    .errorMessage("Sekil silmek huququna sahib deyilsiniz")
+//                    .httpStatus(HttpStatus.BAD_REQUEST)
+//                    .errorCode(ErrorCode.ACCESS_DENIED)
+//                    .build();
+//        }
+        imageService.deleteImage(imageId);
+
     }
 
 
@@ -519,9 +535,8 @@ public class QuestionService {
             }
         }
 
-
-        user.getLikesQuestions().add(question);
-        userRepository.save(user);
+        question.getLikedUsers().add(user);
+        questionRepository.save(question);
     }
 
 
@@ -559,29 +574,44 @@ public class QuestionService {
         }
 
 
-        user.getDissLikedQuestions().add(question);
-        userRepository.save(user);
+        question.getDissLikedUsers().add(user);
+        questionRepository.save(question);
     }
 
 
 
 
 
+    @Transactional
     public void undoLike(int questionId){
         Question question = findById(questionId);
         User user = authService.getAuthenticatedUser();
-        user.getLikesQuestions().remove(question);
-        userRepository.save(user);
+        question.getLikedUsers().remove(user);
+        questionRepository.save(question);
     }
 
 
 
+    @Transactional
     public void undoDissLike(int questionId ){
         Question question = findById(questionId);
         User user = authService.getAuthenticatedUser();
-        user.getDissLikedQuestions().remove(question);
-        userRepository.save(user);
+        question.getDissLikedUsers().remove(user);
+        questionRepository.save(question);
     }
+
+
+
+    public boolean auth(String name , int id){
+        System.out.println(name);
+        Question question = findById(id);
+        if (question.getUser().getUsername().equals(name)){
+            System.out.println(question.getUser().getUsername());
+            return true;
+        }
+        return false;
+    }
+
 
 
 

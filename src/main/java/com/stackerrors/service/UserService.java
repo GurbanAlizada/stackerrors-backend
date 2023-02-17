@@ -54,12 +54,19 @@ public class UserService {
         }
 
 
-        User user = User.builder()
-                .creationDate(new Date(System.currentTimeMillis()))
-                .email(request.getEmail())
-                .username(request.getUsername())
-                .role(Role.USER)
-                .build();
+//        User user = User.builder()
+//                .creationDate(new Date(System.currentTimeMillis()))
+//                .email(request.getEmail())
+//                .username(request.getUsername())
+//                .role(Role.USER)
+//                .build();
+
+
+        User user = new User();
+        user.setCreationDate(new Date(System.currentTimeMillis()));
+        user.setEmail(request.getEmail());
+        user.setUsername(request.getUsername());
+        user.setRole(Role.USER);
 
         user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
 

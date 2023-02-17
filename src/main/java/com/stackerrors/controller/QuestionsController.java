@@ -8,13 +8,15 @@ import com.stackerrors.dtos.response.QuestionListItemDto;
 import com.stackerrors.service.QuestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/question")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000" , maxAge = 3600)
 public class QuestionsController {
 
 
@@ -28,7 +30,7 @@ public class QuestionsController {
     @PostMapping(value = "/askQuestion" , consumes = {"multipart/form-data" },
             produces = "application/json" )
     @ResponseStatus(HttpStatus.CREATED)
-   // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public void askQuestion(@Valid @ModelAttribute AskQuestionRequest request) {
         service.askQuestion(request);
     }
@@ -36,7 +38,7 @@ public class QuestionsController {
 
     @PutMapping(value = "/update")
     @ResponseStatus(HttpStatus.OK)
-   // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public void updateQuestion ( @Valid @RequestBody UpdateQuestionRequest request){
         service.updateQuestion(request);
     }
@@ -46,15 +48,23 @@ public class QuestionsController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/uploadImage"  , consumes = {"multipart/form-data" },
             produces = "application/json")
-    //  @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("@questionService.auth( authentication.name , #request.questionId) ")
     public void uploadImage(@Valid @ModelAttribute UploadImageRequest request){
         service.uploadImage(request);
     }
 
 
+    @DeleteMapping("/deleteImage")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("@questionService.auth( authentication.name , #questionId)")
+    public void deleteImage(@RequestParam int imageId , @RequestParam int questionId) throws IOException {
+        service.deleteImage(imageId, questionId);
+    }
+
+
 
     @DeleteMapping("/delete/{id}")
-    //  @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public void deleteQuestion(@PathVariable("id") int id){
         service.deleteQuestion(id);
     }
@@ -202,7 +212,7 @@ public class QuestionsController {
 
     @GetMapping("/dissLike")
     @ResponseStatus(HttpStatus.OK)
-    public void dissLikeQuestion(@RequestParam("questionId") int questionId){
+    public void dissLikeQuestion(@RequestParam("questionId") int questionId) throws InterruptedException {
         service.dissLikeQuestion(questionId);
     }
 
@@ -219,6 +229,8 @@ public class QuestionsController {
     public void undoDissLike(@RequestParam("questionId") int questionId){
         service.undoDissLike(questionId);
     }
+
+
 
 
 

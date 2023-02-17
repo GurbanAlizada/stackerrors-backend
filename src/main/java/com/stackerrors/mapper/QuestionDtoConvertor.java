@@ -45,6 +45,7 @@ public class QuestionDtoConvertor {
                 .answerCount(question.getComments().size())
                 .views(question.getViews())
                 .likeCount(question.getLikedUsers().size())
+                .dissLikeCount(question.getDissLikedUsers().size())
                 .updateDate(question.getUpdateDate())
                 .userDto(userDtoConvertor.convertToUserDto(question.getUser()))
                 .build();

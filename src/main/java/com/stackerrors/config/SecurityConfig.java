@@ -55,6 +55,8 @@ public class SecurityConfig {
                     auth.antMatchers( HttpMethod.GET ,"/api/tag/**").permitAll();
                     auth.antMatchers( HttpMethod.GET ,"/api/question/**").permitAll();
                     auth.antMatchers( HttpMethod.GET ,"/api/error/**").permitAll();
+                    auth.antMatchers( HttpMethod.GET , "/api/comment/**").permitAll();
+                    auth.antMatchers( HttpMethod.GET , "/api/error/**").permitAll();
                     auth.antMatchers( HttpMethod.PUT ,"/api/question/increaseViews/{id}").permitAll();
                     auth.anyRequest().authenticated();
                 })

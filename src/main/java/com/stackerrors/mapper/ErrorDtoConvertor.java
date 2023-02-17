@@ -10,9 +10,11 @@ import java.util.stream.Collectors;
 public class ErrorDtoConvertor {
 
     private final UserDtoConvertor userDtoConvertor;
+    private final ImageDtoConvertor imageDtoConvertor;
 
-    public ErrorDtoConvertor(UserDtoConvertor userDtoConvertor) {
+    public ErrorDtoConvertor(UserDtoConvertor userDtoConvertor, ImageDtoConvertor imageDtoConvertor) {
         this.userDtoConvertor = userDtoConvertor;
+        this.imageDtoConvertor = imageDtoConvertor;
     }
 
 
@@ -22,7 +24,7 @@ public class ErrorDtoConvertor {
                 .description(error.getDescription())
                 .id(error.getId())
                 .imageUrls(error.getErrorImages().stream()
-                        .map(n->n.getImageUrl())
+                        .map(n->imageDtoConvertor.convertToImageDto(n))
                         .collect(Collectors.toList()))
                 .solution(error.getSolution())
                 .tags(error.getTags()
@@ -31,6 +33,10 @@ public class ErrorDtoConvertor {
                         .collect(Collectors.toList()))
                 .title(error.getTitle())
                 .updatedDate(error.getUpdatedDate())
+                .likedErrorUsers(error.getLikedUsers()
+                        .stream()
+                        .map(k->userDtoConvertor.convertToUserDto(k))
+                        .collect(Collectors.toList()))
                 .userDto(userDtoConvertor.convertToUserDto(error.getUser()))
                 .build();
     }

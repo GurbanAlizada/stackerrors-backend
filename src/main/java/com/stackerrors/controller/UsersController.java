@@ -30,7 +30,7 @@ public class UsersController {
             consumes = {"multipart/form-data" },
             produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("permitAll()")
+    //@PreAuthorize("permitAll()")
     public void register(@Valid @ModelAttribute RegisterUserRequest request){
         userService.registerUser(request);
     }
@@ -40,7 +40,7 @@ public class UsersController {
             consumes = {"multipart/form-data" },
             produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public void uploadProfilePhoto(@Valid @ModelAttribute UploadProfilePhotoRequest request) throws IOException {
         profileService.uploadProfilePhoto(request);
     }
@@ -48,7 +48,7 @@ public class UsersController {
 
     @PutMapping("/changeUsername")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public void changeUsername(@RequestParam String newUsername){
         profileService.changeUsername(newUsername);
     }
@@ -56,7 +56,7 @@ public class UsersController {
 
     @PutMapping("/changePassword")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public void changePassword(@RequestBody ChangePasswordRequest request){
         profileService.changePassword(request);
     }

@@ -27,13 +27,12 @@ public class Tag implements Serializable {
     private String about;
 
 
-    @ManyToMany(mappedBy = "tags")
-    //@JsonIgnore
+    @ManyToMany(mappedBy = "tags" )
     private List<Question> questions = new ArrayList<>();
 
 
-    @ManyToMany(mappedBy = "tags")
-    //@JsonIgnore
+
+    @ManyToMany(mappedBy = "tags" )
     private List<Error> errors = new ArrayList<>();
 
 

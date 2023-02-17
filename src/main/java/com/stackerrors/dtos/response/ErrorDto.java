@@ -1,6 +1,5 @@
 package com.stackerrors.dtos.response;
 
-import com.stackerrors.model.Tag;
 import lombok.Builder;
 
 import java.util.Date;
@@ -27,7 +26,7 @@ public class ErrorDto {
     private Date updatedDate;
 
 
-    private List<String> imageUrls;
+    private List<ImageDto> imageUrls;
 
 
     private UserDto userDto;
@@ -36,19 +35,22 @@ public class ErrorDto {
 
     private List<String> tags ;
 
+    private List<UserDto> likedErrorUsers;
+
 
     public ErrorDto(int id, String title, String description, String solution,
-                    Date creationDate, Date updatedDate, List<String> imageUrls,
-                    UserDto userDto, List<String> tags) {
+                    Date creationDate, Date updatedDate, List<ImageDto> imageUrls,
+                    UserDto userDto, List<String> tags , List<UserDto> likedErrorUsers) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.solution = solution;
         this.creationDate = creationDate;
         this.updatedDate = updatedDate;
-        this.imageUrls = imageUrls;
         this.userDto = userDto;
         this.tags = tags;
+        this.likedErrorUsers = likedErrorUsers;
+        this.imageUrls = imageUrls;
     }
 
     public ErrorDto() {
@@ -102,11 +104,11 @@ public class ErrorDto {
         this.updatedDate = updatedDate;
     }
 
-    public List<String> getImageUrls() {
+    public List<ImageDto> getImageUrls() {
         return imageUrls;
     }
 
-    public void setImageUrls(List<String> imageUrls) {
+    public void setImageUrls(List<ImageDto> imageUrls) {
         this.imageUrls = imageUrls;
     }
 
@@ -124,5 +126,13 @@ public class ErrorDto {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public List<UserDto> getLikedErrorUsers() {
+        return likedErrorUsers;
+    }
+
+    public void setLikedErrorUsers(List<UserDto> likedErrorUsers) {
+        this.likedErrorUsers = likedErrorUsers;
     }
 }

@@ -38,12 +38,14 @@ public class QuestionDto {
 
     private int likeCount;
 
+    private int dissLikeCount;
+
 
     public QuestionDto(int questionId, String title, String text,
                        List<String> tagNames, boolean isActive, boolean answered,
                        List<QuestionCommentDto> comments, List<ImageDto> images,
                        Date creationDate, Date updateDate, Integer views,
-                       int answerCount, UserDto userDto, int likeCount) {
+                       int answerCount, UserDto userDto, int likeCount , int dissLikeCount) {
         this.questionId = questionId;
         this.title = title;
         this.text = text;
@@ -58,6 +60,7 @@ public class QuestionDto {
         this.answerCount = answerCount;
         this.userDto = userDto;
         this.likeCount = likeCount;
+        this.dissLikeCount = dissLikeCount;
     }
 
 
@@ -178,5 +181,11 @@ public class QuestionDto {
     }
 
 
+    public int getDissLikeCount() {
+        return dissLikeCount;
+    }
 
+    public void setDissLikeCount(int dissLikeCount) {
+        this.dissLikeCount = dissLikeCount;
+    }
 }

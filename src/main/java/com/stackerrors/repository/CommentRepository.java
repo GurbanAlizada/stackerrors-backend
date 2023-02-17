@@ -10,5 +10,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findAllByUser_Id(int userId , Pageable pageable);
 
+    List<Comment> findAllByQuestion_Id(int questionId , Pageable pageable);
 
 }

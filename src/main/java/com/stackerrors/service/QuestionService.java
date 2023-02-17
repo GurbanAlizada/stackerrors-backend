@@ -17,7 +17,6 @@ import com.stackerrors.model.User;
 import com.stackerrors.repository.QuestionRepository;
 import com.stackerrors.repository.UserRepository;
 import lombok.SneakyThrows;
-import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

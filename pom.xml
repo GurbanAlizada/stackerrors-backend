@@ -8,11 +8,11 @@
         <version>2.5.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.breynli</groupId>
-    <artifactId>breynli-backend</artifactId>
+    <groupId>com.stackerrors</groupId>
+    <artifactId>stackerrors-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>breynli-backend</name>
-    <description>breynli-backend</description>
+    <name>stackerrors-backend</name>
+    <description>stackerrors-backend</description>
     <properties>
         <java.version>8</java.version>
     </properties>
@@ -38,11 +38,13 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <version>8.0.28</version>
         </dependency>
+
 
         <dependency>
             <groupId>com.h2database</groupId>
@@ -144,5 +146,9 @@
             </plugin>
         </plugins>
     </build>
+
+
+
+
 
 </project>

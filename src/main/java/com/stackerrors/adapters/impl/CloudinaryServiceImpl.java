@@ -1,12 +1,14 @@
 package com.stackerrors.adapters.impl;
 
-import com.stackerrors.adapters.inter.CloudServiceInter;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import lombok.SneakyThrows;
+import com.stackerrors.adapters.inter.CloudServiceInter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,19 +21,31 @@ import java.util.Objects;
 public class CloudinaryServiceImpl implements CloudServiceInter {
 
     private Cloudinary cloudinary;
+
+
     @Value("${cloud-service.cloudName}")
-    private String cloudName;
+    private  String CLOUD_NAME;
+
     @Value("${cloud-service.apiKey}")
-    private String apiKey;
+    private   String API_KEY;
+
     @Value("${cloud-service.apiSecret}")
-    private String apiSecret;
+    private   String API_SECRET;
+
+
+
+    @PostConstruct
+    public void init(){
+        Map<String, String> valuesMap = new HashMap<>();
+        valuesMap.put("cloud_name", CLOUD_NAME);
+        valuesMap.put("api_key", API_KEY );
+        valuesMap.put("api_secret",API_SECRET );
+        cloudinary = new Cloudinary(valuesMap);
+    }
+
 
     public CloudinaryServiceImpl() {
-        Map<String, String> valuesMap = new HashMap<>();
-        valuesMap.put("cloud_name", "alizada" );
-        valuesMap.put("api_key", "231755285583346" );
-        valuesMap.put("api_secret","P2WIwBBTmrFrWK3FxfBT1gkfugQ" );
-        cloudinary = new Cloudinary(valuesMap);
+
     }
 
 

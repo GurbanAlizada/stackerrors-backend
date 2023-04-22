@@ -33,7 +33,7 @@ public class ErrorDtoConvertor {
                         .collect(Collectors.toList()))
                 .title(error.getTitle())
                 .updatedDate(error.getUpdatedDate())
-                .likedErrorUsers(error.getLikedUsers()
+                .likedErrorUsers(error.getLikedErrorUsers()
                         .stream()
                         .map(k->userDtoConvertor.convertToUserDto(k))
                         .collect(Collectors.toList()))

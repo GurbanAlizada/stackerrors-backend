@@ -160,7 +160,7 @@ public class ErrorService {
     public void likeError(int errorId){
         Error error = findById(errorId);
         User user  = authService.getAuthenticatedUser();
-        List<User> likedUsers = error.getLikedUsers();
+        List<User> likedUsers = error.getLikedErrorUsers();
 
 
         for (User element : likedUsers){
@@ -173,7 +173,7 @@ public class ErrorService {
             }
         }
 
-        error.getLikedUsers().add(user);
+        error.getLikedErrorUsers().add(user);
         errorRepository.save(error);
 
     }
@@ -184,7 +184,7 @@ public class ErrorService {
     public void undoLikeError(int errorId) {
         Error error = findById(errorId);
         User user  = authService.getAuthenticatedUser();
-        error.getLikedUsers().remove(user);
+        error.getLikedErrorUsers().remove(user);
         errorRepository.save(error);
     }
 

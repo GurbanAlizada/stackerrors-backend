@@ -31,7 +31,7 @@ public class ImageService {
 
 
     public void deleteImage(int id) throws IOException {
-        Image image = getByImageId(id);
+        Image image = getById(id);
         String publishId = image.getPublishId();
         cloudServiceInter.deleteImage(publishId);
         imageRepository.delete(image);
@@ -41,7 +41,7 @@ public class ImageService {
 
 
     public ImageDto getImage(int id){
-        final Image fromDb = getByImageId(id);
+        final Image fromDb = getById(id);
         final ImageDto dto = ImageDto.builder()
                 .id(fromDb.getId())
                 //.questionId(fromDb.getQuestion().getId())
@@ -58,7 +58,7 @@ public class ImageService {
 
 
 
-    protected Image getByImageId(int id){
+    protected Image getById(int id){
         final Image image = imageRepository.findById(id).orElseThrow(
                 () ->
                         GenericException.builder()

@@ -69,7 +69,7 @@ public class QuestionDtoConvertor {
                         .isVerified(n.isVerified())
                         .creationDate(n.getCreationDate())
                         .updatedDate(n.getUpdateDate())
-                        .likedCount(n.getLikedUsers().size())
+                        .likedCount(n.getLikedCommentUsers().size())
                         .user(userDtoConvertor.convertToUserDto(n.getUser()))
                         .build())
                 .collect(Collectors.toList());

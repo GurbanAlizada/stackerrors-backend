@@ -26,7 +26,6 @@ public class RegisterUserRequest {
     @Email
     private String email;
 
-
     private MultipartFile profilePhoto;
 
 }

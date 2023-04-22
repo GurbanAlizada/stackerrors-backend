@@ -27,6 +27,8 @@ public class  EmailService {
 
         String subject = "Here's the link to reset your password";
 
+        //errors.com/forgot-password?token=23dh27hd238yehd2ggd23dhd37hd23d237dh23yyedbwyed
+
         String content = "<p>Hello,</p>"
                 + "<p>You have requested to reset your password.</p>"
                 + "<p>Click the link below to change your password:</p>"

@@ -16,6 +16,7 @@ import com.stackerrors.model.Tag;
 import com.stackerrors.model.User;
 import com.stackerrors.repository.QuestionRepository;
 import com.stackerrors.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -72,6 +73,7 @@ public class QuestionService {
 
         User user = authService.getAuthenticatedUser();
         List<Tag> tags = questionsTags(request.getTags());
+
 
         Question question = new Question();
                 question.setTitle(request.getTitle());

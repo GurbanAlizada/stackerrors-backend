@@ -19,7 +19,6 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000" , maxAge = 3600)
 public class QuestionsController {
 
-
     private final QuestionService service;
 
     public QuestionsController(QuestionService service) {
@@ -30,7 +29,7 @@ public class QuestionsController {
     @PostMapping(value = "/askQuestion" , consumes = {"multipart/form-data" },
             produces = "application/json" )
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated()")
+   // @PreAuthorize("isAuthenticated()")
     public void askQuestion(@Valid @ModelAttribute AskQuestionRequest request) {
         service.askQuestion(request);
     }
@@ -38,7 +37,7 @@ public class QuestionsController {
 
     @PutMapping(value = "/update")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public void updateQuestion ( @Valid @RequestBody UpdateQuestionRequest request){
         service.updateQuestion(request);
     }

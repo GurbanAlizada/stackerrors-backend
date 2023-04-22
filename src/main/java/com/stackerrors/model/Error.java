@@ -1,8 +1,12 @@
 package com.stackerrors.model;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.annotation.security.DenyAll;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +16,9 @@ import java.util.List;
 @Entity
 @Table(name = "errors")
 @Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Error implements Serializable {
 
 
@@ -59,122 +66,4 @@ public class Error implements Serializable {
     private List<User> likedErrorUsers;
 
 
-
-
-    // all and no args contructors
-    public Error(int id, String title, String description, String solution,
-                 Date creationDate, Date updatedDate, List<Image> errorImages,
-                 User user, List<Tag> tags, List<User> likedUsers) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.solution = solution;
-        this.creationDate = creationDate;
-        this.updatedDate = updatedDate;
-        this.errorImages = errorImages;
-        this.user = user;
-        this.tags = tags;
-        this.likedErrorUsers = likedUsers;
-    }
-
-    public Error() {
-    }
-
-
-    // getter and setter
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getSolution() {
-        return solution;
-    }
-
-    public void setSolution(String solution) {
-        this.solution = solution;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Date getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(Date updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
-    public List<Image> getErrorImages() {
-        return errorImages;
-    }
-
-    public void setErrorImages(List<Image> errorImages) {
-        this.errorImages = errorImages;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
-    }
-
-    public List<User> getLikedUsers() {
-        return likedErrorUsers;
-    }
-
-    public void setLikedUsers(List<User> likedUsers) {
-        this.likedErrorUsers = likedUsers;
-    }
-
-    @Override
-    public String toString() {
-        return "Error{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", solution='" + solution + '\'' +
-                ", creationDate=" + creationDate +
-                ", updatedDate=" + updatedDate +
-                ", errorImages=" + errorImages +
-           //     ", user=" + user +
-                ", tags=" + tags +
-            //    ", likedUsers=" + likedUsers +
-                '}';
-    }
 }

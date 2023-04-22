@@ -173,7 +173,7 @@ public class CommentService {
     public void likeComment(int commentId){
         User user = authService.getAuthenticatedUser();
         Comment comment = findById(commentId);
-        List<User> likedUsers = comment.getLikedUsers();
+        List<User> likedUsers = comment.getLikedCommentUsers();
 
         for (User element : likedUsers ){
             if (element.getId() == user.getId()){
@@ -185,7 +185,7 @@ public class CommentService {
             }
         }
 
-        comment.getLikedUsers().add(user);
+        comment.getLikedCommentUsers().add(user);
         commentRepository.save(comment);
     }
 
@@ -277,7 +277,7 @@ public class CommentService {
     public void undoLikeCommemt(int commentId) {
         Comment comment = findById(commentId);
         User user = authService.getAuthenticatedUser();
-        comment.getLikedUsers().remove(user);
+        comment.getLikedCommentUsers().remove(user);
         commentRepository.save(comment);
     }
 

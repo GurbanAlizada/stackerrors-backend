@@ -23,7 +23,6 @@ public class GenericException extends RuntimeException{
 
 
 
-
     // getter and setter
     public HttpStatus getHttpStatus() {
         return httpStatus;

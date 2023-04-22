@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/error")
+@CrossOrigin(origins = "http://localhost:3000" , maxAge = 3600)
 public class ErrorsController {
 
     private final ErrorService errorService;

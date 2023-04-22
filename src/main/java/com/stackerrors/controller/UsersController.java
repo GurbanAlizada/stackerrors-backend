@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000" , maxAge = 3600)
 public class UsersController {
 
     private final UserService userService;
